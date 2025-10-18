@@ -1,29 +1,30 @@
+
 # 🧠 XFitness Mobile App — Full Product Requirements Document (PRD)
 
 ---
 
 ## 🎯 1. Purpose
 
-The **XFitness Mobile App** is the **member-facing** companion to the XFitness Admin Web System.
-Its purpose is to let gym members:
+The **XFitness Mobile App** is the **member-facing companion** to the XFitness ecosystem.
+It lets gym members:
 
-* Manage memberships and renewals
+* Manage and renew memberships
 * Track workouts and attendance
-* Receive notifications and updates
-* Access the gym via facial recognition
-* Engage with personalized fitness plans and progress
+* Receive updates and notifications
+* Access the gym via facial recognition or QR
+* Engage with personalized training and progress insights
 
-Goal: A seamless, all-in-one mobile experience that connects users with their gym, coach, and data — powered by Expo (React Native) for cross-platform speed and maintainability.
+Goal: Deliver a **seamless, data-synchronized** experience that connects users with their gym, trainer, and performance — built using **Expo (React Native)** for iOS + Android parity.
 
 ---
 
 ## 👥 2. User Roles
 
-| Role                   | Description                                  | Permissions                                                      |
-| ---------------------- | -------------------------------------------- | ---------------------------------------------------------------- |
-| **Member (User)** | Regular gym-goer with active or expired plan | Access personal dashboard, check-in history, plans, and payments |
-| **Trainer (Optional)** | Assigned coach for members                   | View clients’ progress, upload workout routines                  |
-| **Guest (Visitor)** | Not yet a member                             | Limited app use (browse plans, contact gym, register)            |
+| Role                 | Description                      | Permissions                                               |
+| -------------------- | -------------------------------- | --------------------------------------------------------- |
+| **Member**           | Active or expired gym member     | Access dashboard, renew plans, log workouts, view history |
+| **Trainer (Future)** | Personal coach linked to members | View assigned clients, upload routines                    |
+| **Guest**            | Non-member visitor               | Browse plans, contact gym, sign up                        |
 
 ---
 
@@ -33,38 +34,39 @@ Goal: A seamless, all-in-one mobile experience that connects users with their gy
 
 ### 🧍‍♂️ A. Authentication & Onboarding
 
-**Purpose:** Allow members to register, log in, and connect to the gym system securely.
+**Purpose:** Secure access and smooth first-time experience.
 
-**Requirements:**
+**Requirements**
 
-* Login via email/password or phone OTP
-* Sign-up via referral code or manual registration
-* Forgot password (email/OTP reset)
-* Session persistence (JWT token)
-* Multi-gym support (future-proof: join multiple gyms)
+* Login via email + password (Supabase Auth)
+* Sign-up with referral or manual registration
+* Forgot password via Supabase `resetPasswordForEmail`
+* JWT-based session persistence (`expo-secure-store`)
+* Basic onboarding tutorial (3-4 slides)
+* Future-proof for multi-gym membership
 
-✅ **Screens:**
+✅ **Screens**
 
 * `/login`
 * `/register`
 * `/forgot-password`
-* `/onboarding` (tutorial slides)
+* `/onboarding`
 
 ---
 
 ### 💳 B. Membership Management
 
-**Purpose:** Manage and renew gym subscriptions easily.
+**Purpose:** Central control for subscription lifecycle.
 
-**Requirements:**
+**Requirements**
 
-* Display current membership plan (type, price, start/end date, status)
-* Renew membership (FPX/Stripe payment)
-* Manual renewal option (e.g., pay at counter → admin approves)
-* Purchase new plan if expired
-* Payment history list with invoice details
+* View active plan: name, price, duration, start + end date
+* Renew via integrated payment (FPX / Stripe)
+* Manual renewal request (status = pending)
+* View invoices and payment history
+* Auto-update member status when webhook confirms success
 
-✅ **Screens:**
+✅ **Screens**
 
 * `/membership`
 * `/membership/renew`
@@ -73,19 +75,19 @@ Goal: A seamless, all-in-one mobile experience that connects users with their gy
 
 ---
 
-### 🧠 C. Workout Tracking (Fitness Features)
+### 🧠 C. Workout Tracking
 
-**Purpose:** Enable users to plan, log, and review workouts.
+**Purpose:** Track and visualize training performance.
 
-**Requirements:**
+**Requirements**
 
-* Daily workout log (exercise name, sets, reps, weight, notes)
-* Predefined workout plans by trainers
-* Custom routines
-* Progress graph (by body part, weight lifted, frequency)
-* Optional AI-coach mode (recommend next workout)
+* Log workouts (exercise, sets, reps, weight, notes)
+* View trainer-assigned or template plans
+* Custom personal routines
+* Progress graphs (weekly frequency, volume, or muscle group)
+* AI coach (Phase 2): suggest next workout
 
-✅ **Screens:**
+✅ **Screens**
 
 * `/workouts`
 * `/workout/:id`
@@ -93,36 +95,36 @@ Goal: A seamless, all-in-one mobile experience that connects users with their gy
 
 ---
 
-### 🏋️ D. Attendance / Access Logs (via Facial Recognition)
+### 🏋️ D. Attendance / Access Logs
 
-**Purpose:** Show users their check-in history from gym entry logs.
+**Purpose:** Display gym entry history from the door system.
 
-**Requirements:**
+**Requirements**
 
-* Sync data from Admin’s ZKTeco middleware API
-* Show log of date/time of entries
-* Filter by week/month
-* Show access status (Granted/Denied)
-* Optional real-time “last seen” update
+* Fetch from Supabase `access_logs`
+* Show date/time, device, status (Granted / Denied)
+* Filter by date range
+* Show “last access” indicator on home screen
+* Realtime sync via Supabase subscriptions
 
-✅ **Screens:**
+✅ **Screens**
 
 * `/access-logs`
 
 ---
 
-### 📅 E. Classes & Bookings (Optional but valuable)
+### 📅 E. Classes & Bookings (Phase 2)
 
-**Purpose:** Let users book gym classes, PT sessions, or workshops.
+**Purpose:** Enable booking of classes and sessions.
 
-**Requirements:**
+**Requirements**
 
-* View available classes by date/time
-* Book or cancel spots
-* Show trainer, duration, price (if any)
-* Sync bookings to calendar
+* View upcoming classes (name, trainer, capacity)
+* Book/cancel attendance
+* Sync with calendar (optional)
+* Prevent overbooking (capacity check in `class_enrollments`)
 
-✅ **Screens:**
+✅ **Screens**
 
 * `/classes`
 * `/classes/:id`
@@ -132,16 +134,17 @@ Goal: A seamless, all-in-one mobile experience that connects users with their gy
 
 ### 💬 F. Notifications & Announcements
 
-**Purpose:** Keep members informed about promos, updates, and reminders.
+**Purpose:** Keep members updated and engaged.
 
-**Requirements:**
+**Requirements**
 
-* Push notifications (Firebase Cloud Messaging)
-* Email fallback (SendGrid)
+* Push via **Firebase Cloud Messaging**
+* Email fallback via SendGrid
 * Notification inbox in-app
-* Categories: Promotions, Expiry Alerts, Gym Updates
+* Categories: Promotions / Renewal Alerts / Updates
+* Device token registration stored in `device_tokens`
 
-✅ **Screens:**
+✅ **Screens**
 
 * `/notifications`
 * `/notifications/:id`
@@ -150,166 +153,238 @@ Goal: A seamless, all-in-one mobile experience that connects users with their gy
 
 ### 🧾 G. Profile & Settings
 
-**Purpose:** Manage personal data and preferences.
+**Purpose:** Manage identity and preferences.
 
-**Requirements:**
+**Requirements**
 
-* View/edit name, email, phone, avatar
-* Manage password
-* Upload facial recognition photo (for access system)
-* Set notification preferences (push/email toggle)
-* Logout
+* Edit name, avatar, phone, email
+* Change password
+* Upload face photo (for access)
+* Notification toggle (push/email)
+* Logout / delete account
 
-✅ **Screens:**
+✅ **Screens**
 
 * `/profile`
 * `/settings`
 
 ---
 
-### 📈 H. Dashboard / Home Overview
+### 📈 H. Dashboard / Home
 
-**Purpose:** Quick overview of user’s current gym status and actions.
+**Purpose:** Snapshot of fitness & membership state.
 
-**Contents:**
+**Content**
 
-* Greeting + membership status (Active / Expired / Pending)
-* Quick buttons: Renew Membership, Log Workout, View Progress
+* Greeting + membership status badge
+* Renewal countdown
+* Quick actions (Renew / Log Workout / Progress)
 * Recent notifications
-* Attendance summary
+* Attendance streak summary
 
-✅ **Screens:**
+✅ **Screens**
 
-* `/home` (Assuming this maps to `app/(main)/dashboard.tsx` or similar)
+* `/home` → primary route inside `(main)` stack
 
 ---
 
 ## 🌐 4. Integrations
 
-| Function                | Integration                       | Notes                                    |
-| ----------------------- | --------------------------------- | ---------------------------------------- |
-| **Auth & Database** | Supabase                          | Secure member data storage               |
-| **Payments** | Stripe (FPX)                      | Webhook → syncs membership automatically |
-| **Facial Recognition** | ZKTeco via Cams Biometric Web API | Syncs access logs                        |
-| **Push Notifications** | Firebase Cloud Messaging          | For all app alerts                       |
-| **Email Notifications** | SendGrid                          | For receipts & promotions                |
-| **Analytics** | PostHog or Amplitude              | User behavior insights                   |
+| Function          | Service                       | Description                            |
+| ----------------- | ----------------------------- | -------------------------------------- |
+| **Auth & DB**     | Supabase                      | User, membership, and workout storage  |
+| **Payments**      | Stripe / FPX                  | Secure checkout + webhook confirmation |
+| **Facial Access** | ZKTeco → `/api/access/verify` | Door verification                      |
+| **Notifications** | Firebase Cloud Messaging      | Push delivery                          |
+| **Email**         | SendGrid                      | Transactional + promo emails           |
+| **Analytics**     | PostHog / Amplitude           | Engagement tracking                    |
 
 ---
 
-## 🧱 5. Backend API (Key Endpoints - Conceptual)
+## 🧱 5. Backend API (Supabase Endpoints)
 
-*These represent interactions with the Supabase backend, to be implemented later.*
+| Action           | Endpoint                  | Method | Description       |
+| ---------------- | ------------------------- | ------ | ----------------- |
+| Login            | `/api/auth/login`         | POST   | Authenticate user |
+| Register         | `/api/auth/register`      | POST   | Create account    |
+| Get Membership   | `/api/membership/:userId` | GET    | Fetch plan        |
+| Renew Membership | `/api/membership/renew`   | POST   | Payment trigger   |
+| Get Workouts     | `/api/workouts`           | GET    | Fetch logs        |
+| Log Workout      | `/api/workouts`           | POST   | Create log        |
+| Access Logs      | `/api/access/logs/:id`    | GET    | Member entries    |
+| Notifications    | `/api/notifications`      | GET    | Fetch inbox       |
+| Update Profile   | `/api/users/:id`          | PUT    | Edit profile      |
 
-| Function          | Endpoint                   | Method | Description           |
-| ----------------- | -------------------------- | ------ | --------------------- |
-| Login             | `/api/auth/login`          | POST   | Member login          |
-| Register          | `/api/auth/register`       | POST   | New member signup     |
-| Get Membership    | `/api/membership/:id`      | GET    | Fetch plan details    |
-| Renew Membership  | `/api/membership/renew`    | POST   | FPX/Stripe payment    |
-| Get Workouts      | `/api/workouts`            | GET    | Fetch user workouts   |
-| Add Workout Log   | `/api/workouts/log`        | POST   | Log completed workout |
-| Get Access Logs   | `/api/access/logs/:userId` | GET    | Fetch gym entries     |
-| Get Notifications | `/api/notifications`       | GET    | Pull messages         |
-| Update Profile    | `/api/users/:id`           | PUT    | Edit personal info    |
-
----
-
-## 🔐 6. Security Requirements
-
-* JWT authentication for all Supabase interactions.
-* Secure local storage for tokens (e.g., `expo-secure-store`).
-* OTP/email verification for registration via Supabase Auth.
-* Row Level Security (RLS) policies in Supabase for data access.
-* Encrypted API communication (HTTPS).
-* Protect sensitive data like facial recognition vectors.
+All APIs communicate through Supabase RPC or REST and must log activities for audit.
 
 ---
 
-## 📊 7. Dashboard Metrics (User-Facing)
+## 🔐 6. Security
 
-* Membership status timeline (renewal countdown).
-* Attendance streaks.
-* Workout frequency/streak graph.
-* Optional: Calories burned (if integrated).
-* Optional: Class attendance leaderboard.
-
----
-
-## 🧩 8. UX Principles
-
-* Fast, frictionless interactions.
-* Minimal navigation depth (≤3 taps to core actions).
-* Dark/light mode support (use `useColorScheme` and theme constants).
-* Focus on **progress visibility**.
-* Subtle gamification (streaks, milestones).
+* Supabase Auth (JWT) for all routes
+* `expo-secure-store` for local tokens
+* HTTPS + strict CORS
+* RLS (Row-Level Security) → users modify only their data
+* Encrypted storage for biometric templates
+* Session timeout after inactivity
 
 ---
 
-## 🧪 9. Testing & QA
+## 📊 7. User Dashboard Metrics
 
-* Unit tests (Jest + RNTL) for components, hooks, utils.
-* Integration tests for auth flow, payment simulation.
-* Manual testing for UI/UX, navigation, platform consistency.
-* Beta testing via Expo EAS (TestFlight / Play Store Beta).
-
----
-
-## 🧰 10. Tech Stack (Reiteration)
-
-| Layer         | Choice                          | Notes                  |
-| ------------- | ------------------------------- | ---------------------- |
-| Frontend      | **React Native (Expo SDK 52+)** | Cross-platform build   |
-| State Mgmt    | **Zustand** | Lightweight            |
-| Navigation    | **Expo Router** | File-based             |
-| Forms         | **react-hook-form + zod** | Validation             |
-| Backend       | **Supabase** | Auth, DB, Storage      |
-| Payments      | **Stripe (FPX)** | Webhook integration    |
-| Notifications | **Firebase Cloud Messaging** | Push delivery          |
-| Charts        | **Victory Native / Recharts** | Progress visualization |
+* Membership renewal countdown
+* Attendance streak (e.g., “5 days in a row”)
+* Weekly workout frequency
+* Revenue contribution / points (gamified)
+* Optional: calorie tracking / class rank
 
 ---
 
-## 🚀 11. Future Expansion
+## 🎨 8. UX & Design Principles
 
-| Feature           | Description                           |
-| ----------------- | ------------------------------------- |
-| In-App Chat       | Trainer ↔ Member messaging            |
-| AI Coach          | Suggest workouts based on past logs   |
-| Smart Watch Sync  | Apple Health / Google Fit data import |
-| Referral System   | Invite friends → reward points        |
-| Social Feed       | Members share workouts / milestones   |
-| Multi-Gym Support | Switch between partner gyms           |
-
----
-
-## ✅ 12. Success Metrics
-
-| Metric                              | Target     |
-| ----------------------------------- | ---------- |
-| Onboarding → Active User Conversion | ≥ 70%      |
-| Membership Renewal Rate             | ≥ 60%      |
-| Average Session Duration            | 5+ minutes |
-| App Crash Rate                      | < 1%       |
-| Support Tickets / 100 Users         | < 3        |
+* Atomic component design
+* Consistent typography + spacing (Tailwind tokens)
+* ≤ 3 taps to reach any core action
+* Light / dark mode support
+* Minimal forms; contextual actions
+* Streaks + badges for motivation
+* Optimistic UI updates (e.g., workout log saved instantly)
 
 ---
 
-### 💡 Real-World Example
+## 🧮 9. Data Model Overview
 
-> A member named Aina opens the XFitness app.
-> The home screen shows her membership expires in 5 days, workout streak (8 days), and “Renew Now” button.
-> She taps “Renew”, pays via FPX, gets instant confirmation, and receives a push + email receipt.
-> Later that day, she enters the gym — her face scan logs automatically sync to `/access-logs` in the app.
-> She views her streak growing and feels rewarded → higher retention.
+| Table               | Key Fields                                     | Purpose                  |
+| ------------------- | ---------------------------------------------- | ------------------------ |
+| `profiles`          | id, full_name, avatar_url                      | Member profile           |
+| `members`           | user_id, plan_id, status, start_date, end_date | Membership state         |
+| `membership_plans`  | id, name, price, duration                      | Subscription definitions |
+| `payments`          | id, user_id, plan_id, amount, status           | Transactions             |
+| `workouts`          | id, user_id, data(json), created_at            | Logged workouts          |
+| `access_logs`       | id, user_id, timestamp, status                 | Entry records            |
+| `notifications`     | id, title, body, type, created_at              | Messages                 |
+| `device_tokens`     | user_id, token                                 | Push delivery            |
+| `class_enrollments` | class_id, member_id                            | Bookings (Phase 2)       |
+
+---
+
+## ⚙️ 10. State Management Structure
+
+```text
+/store
+  auth.ts        → user session + token
+  profile.ts     → profile data
+  membership.ts  → current plan + status
+  workouts.ts    → logs + progress
+  notifications.ts → inbox state
+  ui.ts          → theme, modals
+```
+
+* **Zustand** for local stores
+* **React Query** for server sync + caching
+* Offline queue (future): store unsent workout logs
 
 ---
 
-## 🧩 Summary
+## 🧪 11. Testing & QA
 
-**XFitness App** = Member Companion + Payment Portal + Progress Tracker
-**Core Flows:** Auth → Membership → Payment → Access → Progress → Notifications
-**Integrations:** Supabase + Stripe + Firebase (FCM) + ZKTeco
-**Goal:** Empower members, automate renewals, connect data seamlessly.
+* **Unit Tests** → components + hooks (Jest / React Native Testing Library)
+* **Integration Tests** → auth & payment flow
+* **Manual QA** → navigation, dark-mode, push notifications
+* **Beta Testing** → Expo EAS / TestFlight / Play Store Beta
+
+Acceptance Criteria:
+
+1. User can register → purchase → enter gym.
+2. Admin edits reflect in mobile within < 3 sec.
+3. App stable under offline reconnection.
 
 ---
+
+## 🧰 12. Tech Stack
+
+| Layer         | Library                        | Notes               |
+| ------------- | ------------------------------ | ------------------- |
+| Framework     | **React Native (Expo SDK 52)** | Cross-platform core |
+| Navigation    | **Expo Router v3**             | File-based          |
+| State Mgmt    | **Zustand + React Query**      | Local + async sync  |
+| Forms         | **react-hook-form + zod**      | Validation          |
+| UI Library    | **NativeWind / Tailwind**      | Styling             |
+| Charts        | **Victory Native / Recharts**  | Progress graphs     |
+| Backend       | **Supabase**                   | Auth / DB / Storage |
+| Payments      | **Stripe (FPX)**               | Secure renewals     |
+| Notifications | **Firebase Cloud Messaging**   | Push service        |
+
+---
+
+## 📶 13. Offline & Performance Handling
+
+* Cache last known data with React Query persistor
+* Show skeleton loaders on cold start
+* Background sync (EAS Task Manager) for workouts / logs
+* Lazy-load non-critical screens
+* Optimize images (Supabase Storage resizing)
+
+---
+
+## 🚀 14. Future Expansion
+
+| Feature           | Description                      |
+| ----------------- | -------------------------------- |
+| In-App Chat       | Trainer ↔ Member messaging       |
+| AI Coach          | Personalized recommendations     |
+| Smart Watch Sync  | Apple Health / Google Fit import |
+| Referral System   | Invite friends → points          |
+| Social Feed       | Share progress publicly          |
+| Multi-Gym Support | Switch between branches          |
+| Streak Challenges | Weekly or monthly leaderboards   |
+
+---
+
+## ✅ 15. Success Metrics
+
+| KPI                         | Target  |
+| --------------------------- | ------- |
+| Signup → Active Conversion  | ≥ 70 %  |
+| Renewal Rate                | ≥ 60 %  |
+| Avg Session Duration        | ≥ 5 min |
+| Crash Rate                  | < 1 %   |
+| Support Tickets / 100 Users | < 3     |
+
+---
+
+## 📖 16. Example User Journey
+
+> **Aina** opens the XFitness App.
+> Home shows: *“Membership expires in 5 days.”*
+> She taps **Renew Now**, pays via FPX, and instantly sees status → **Active**.
+> The same day she enters the gym; ZKTeco verifies her face and logs it.
+> In the app, she checks her streak: 9 days active 🔥
+> A push notification congratulates her — keeping her motivated and retained.
+
+---
+
+## 🧩 17. Summary
+
+**XFitness App = Member Companion + Payment Portal + Progress Tracker**
+
+**Core Flows:**
+Auth → Membership → Payment → Access → Workout → Notifications
+
+**Integrations:** Supabase / Stripe / Firebase / ZKTeco
+
+**Phase 1 Goal:**
+Functional parity with Admin Web + member self-service
+
+**Phase 2 Goal:**
+Full fitness + class ecosystem with AI guidance
+
+---
+
+This file is now ready to live at:
+
+```
+/ai_context/requirements.md
+```
+
+and can be fed directly to your AI build agents or used by human devs for implementation.

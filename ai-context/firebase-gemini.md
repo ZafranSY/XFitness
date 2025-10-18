@@ -1,94 +1,83 @@
-Project Overview
 
-Name: XFitness
-Type: Gym & Fitness Management Ecosystem (Admin Web + Member Mobile)
-Tech Focus: React Native + Expo SDK 52 (Mobile), Next.js + Supabase (Admin Web)
-Goal: Simplify gym operations, automate memberships, payments, attendance, and notifications with real-time sync between hardware (facial recognition), web admin, and mobile apps.
+# 🧠 XFitness — Firebase Gemini Context Brain (Expo Mobile)
 
-🔹 Core Tech Stack
-Layer	Tool / Library	Notes
-Mobile App Framework	React Native (Expo SDK 52+)	Cross-platform
-Navigation	Expo Router (React Navigation 7)	File-based routing
-State Mgmt	Zustand	Simple, predictable state
-Forms	react-hook-form + zod	Validation layer
-Styling	Tailwind (NativeWind)	Utility-first consistency
-Charts	Victory Native / Recharts	Progress visualization
-Auth & Backend	Supabase	JWT auth, Realtime DB, Storage
-Payments	Stripe (FPX)	Webhook integration
-Notifications	Firebase Cloud Messaging + SendGrid	Push & Email
-Face Access Sync	ZKTeco via Cams Biometric Web API	Door entry integration
-Testing	Jest + React Native Testing Library	Unit + integration
-Build & Deploy	Expo EAS + OTA updates	Continuous delivery
-🔹 Design Philosophy
+---
 
-Atomic Design (Brad Frost, 2016): Build components as atoms → molecules → organisms → templates → pages.
+## Project Overview
 
-Minimal Dependencies: Only add libraries with long-term support and Expo compatibility.
+**Name:** XFitness Mobile App
+**Type:** Gym & Fitness Companion (Member-Facing, Expo Go)
+**Mode:** UI-First / Mock-Backend (Firebase + AI Gemini)
+**Goal:** Enable members to access membership, workouts, attendance, and notifications in a **fast, reliable, UI-first** experience before Supabase backend integration.
 
-Expo-First Thinking: Prefer managed workflow unless native modules are unavoidable.
+> Backend = **Supabase (Phase 2)**
+> Firebase / Gemini = **UI dev + emulator + mock data only**
 
-Offline Resilience: Local caching for memberships, access logs, and workouts.
+---
 
-Fast Perceived Performance: Skeleton screens + lazy loading over spinners.
+## 🔹 Core Tech Stack
 
-Human-Centered UX: Progress visibility (streaks, stats) over raw data.
+| Layer            | Tool / Library                      | Notes                           |
+| ---------------- | ----------------------------------- | ------------------------------- |
+| Mobile Framework | React Native (Expo SDK 52+)         | Cross-platform                  |
+| Navigation       | Expo Router (React Navigation 7)    | File-based, nested stacks       |
+| State Mgmt       | Zustand                             | Simple, predictable, mock-first |
+| Forms            | react-hook-form + zod               | Validation & schema enforcement |
+| Styling          | Tailwind (NativeWind)               | Utility-first + responsive      |
+| Charts           | Victory Native / Recharts           | Progress visualization          |
+| Auth & Backend   | Supabase (Phase 2)                  | JWT, real-time DB, storage      |
+| Payments         | Stripe (FPX)                        | Webhook simulation in dev       |
+| Notifications    | Firebase Cloud Messaging + SendGrid | Push / Email mock               |
+| Face Access      | ZKTeco (emulated)                   | Logs mocked locally             |
+| Testing          | Jest + RNTL                         | Unit + integration              |
+| Build & Deploy   | Expo EAS + OTA                      | Fast iteration                  |
 
-🔹 Common Expo Fixes & Workarounds
+---
 
-Expo Go crashing on Reanimated: Lock react-native-reanimated version to SDK’s supported minor version.
+## 🔹 Design Philosophy
 
-Slow bundler on Windows: Use EXPO_USE_METRO_WORKSPACE=1.
+* **Atomic Design:** Atoms → Molecules → Organisms → Screens → Pages
+* **Expo-First Thinking:** Managed workflow wherever possible
+* **Minimal Dependencies:** Only stable, Expo-compatible packages
+* **Offline Resilience:** Cache memberships, workouts, access logs
+* **Fast Perceived Performance:** Skeleton screens + lazy loading
+* **Human-Centered UX:** Streaks, progress bars, motivating visuals
 
-Image picker permissions: Always wrap in await ImagePicker.requestMediaLibraryPermissionsAsync().
+---
 
-Push Notifications not delivered: Ensure expo-notifications config matches Firebase sender ID in app.json.
+## 🔹 Folder Structure (Expo Managed)
 
-Font loading issues: Use useFonts() hook and wait for font load before rendering app root.
-
-🔹 Naming Conventions
-Type	Format	Example
-Components	PascalCase	MemberCard.tsx
-Hooks	camelCase	useMembershipStatus.ts
-Files	kebab-case	payment-summary.tsx
-Screens	PascalCase	MembershipScreen.tsx
-State Stores	suffix Store	useUserStore.ts
-API Routes	RESTful, plural	/api/payments, /api/users/:id
-Folders	lowercase	/screens, /hooks, /lib, /components
-🔹 Folder Structure (Expo Managed)
+```
 /xfitness-app/
 │
-├── app/                      # Expo Router root
-│   ├── (auth)/login.tsx
-│   ├── (auth)/register.tsx
-│   ├── (tabs)/home.tsx
-│   ├── (tabs)/membership.tsx
-│   ├── (tabs)/workouts.tsx
-│   ├── (tabs)/notifications.tsx
-│   └── (tabs)/profile.tsx
+├── app/                     # Expo Router root
+│   ├── (auth)/              # Login, Register, Onboarding
+│   ├── (tabs)/              # Home, Membership, Workouts, Notifications, Profile
+│   └── (main)/              # Dashboard flows / nested screens
 │
 ├── components/
-│   ├── ui/
-│   ├── cards/
-│   └── modals/
+│   ├── ui/                  # Buttons, Cards, Inputs
+│   ├── cards/               # Reusable UI cards
+│   └── modals/              # Popups, alerts
 │
-├── hooks/
-│   ├── useAuth.ts
+├── hooks/                   # Custom hooks (mock & real)
+│   ├── useMockAuth.ts
 │   ├── useMembership.ts
 │   ├── useAccessLogs.ts
 │
 ├── lib/
-│   ├── supabase.ts
-│   ├── stripe.ts
-│   ├── notifications.ts
-│   └── api.ts
+│   ├── supabase.ts          # Supabase client
+│   ├── stripe.ts            # Payment simulation
+│   ├── notifications.ts     # Push/email mocks
+│   └── api.ts               # API abstraction layer
 │
-├── store/
+├── store/                   # Zustand stores
 │   ├── useUserStore.ts
 │   ├── useWorkoutStore.ts
 │
 ├── assets/
 │   ├── fonts/
-│   ├── images/
+│   └── images/
 │
 ├── utils/
 │   ├── formatDate.ts
@@ -96,144 +85,112 @@ Folders	lowercase	/screens, /hooks, /lib, /components
 │
 └── ai_context/
     ├── claude.md
+    ├── firebase-gemini.md   # This file
     ├── requirements.md
-    ├── readme-ai.md
-    └── context.pdf
-
-🔹 Coding Standards
-
-Use TypeScript everywhere.
-
-Always type API responses with zod schemas.
-
-Avoid any types.
-
-Functional components only; no class components.
-
-Use React.memo for heavy lists (FlatList).
-
-Stick to Expo-compatible packages (no raw native modules).
-
-🔹 Testing Convention
-
-Unit tests in /__tests__/
-
-Filename pattern: ComponentName.test.tsx
-
-Coverage for auth, payments, and access sync.
-
-🔹 Version Control
-
-Use GitHub + Conventional Commits (feat:, fix:, chore:).
-
-Use feature branches (feature/workout-logging).
-
-Auto-deploy with Expo EAS + CI.
-
-XFitness — Firebase Gemini Context Brain
-
-## Project Mode
-> UI-First Mode: Focus on complete user-facing screens and navigation before backend integration.
-
-Backend = **Supabase (Phase 2)**
-Firebase = **Dev environment for UI testing** only (mock storage, emulator UI, etc.)
+    ├── design-system.md
+    └── ai-layer.md
+```
 
 ---
 
-## 1. Tech Stack
+## 🔹 File & Naming Conventions
 
-- React Native + Expo SDK 52  
-- TypeScript  
-- Expo Router for navigation  
-- Zustand for state management  
-- React Hook Form for input handling  
-- Tailwind (via NativeWind) for styling  
-- Design system from `/ai_context/design-system.md`
-
----
-
-## 2. Folder Structure
-
-app/
-(auth)/ → Login, Register, Onboarding
-(main)/ → Dashboard, Profile, etc.
-components/ → Reusable UI components
-hooks/ → Custom hooks (e.g., useMockAuth)
-lib/ → Utilities (theme, config)
-store/ → Zustand stores
-styles/ → Tailwind + theme integration
-ai_context/
-firebase-gemini.md → Core architecture & AI brain
-design-system.md → Theme, color tokens
-requirements.md → Functional spec
-ai-layer.md → Behavior rules & conflict resolution
-
-yaml
-Copy code
+| Type       | Format          | Example                       |
+| ---------- | --------------- | ----------------------------- |
+| Components | PascalCase      | MemberCard.tsx                |
+| Hooks      | camelCase       | useMembershipStatus.ts        |
+| Screens    | PascalCase      | MembershipScreen.tsx          |
+| Stores     | use*Store.ts    | useWorkoutStore.ts            |
+| API Routes | RESTful, plural | /api/payments, /api/users/:id |
+| Folders    | lowercase       | /screens, /hooks, /lib        |
 
 ---
 
-## 3. File Naming & Conventions
+## 🔹 Mocking & UI-First Rules
 
-- Components → `PascalCase`
-- Hooks → `useCamelCase`
-- Screens → `index.tsx` inside folders (Expo Router style)
-- Zustand stores → end with `Store.ts`
-- Types → in `/types/` folder, suffixed with `.d.ts`
-- Mock data files → `_mock.ts` prefix
+* **Use mock hooks** until Supabase backend is integrated
+* **Local state only** for interactions (workouts, memberships, access logs)
+* **Firebase / Gemini** = dev emulator / UI mock; do not push production data
+* **AI-driven suggestions**: Generate placeholder text, stats, and streaks
+* **Maintain 70% code / 30% explanation** for clarity in mock logic
 
----
-
-## 4. Design Rules
-
-- Follow `/ai_context/design-system.md` for colors, radius, and spacing.
-- Use `ThemeProvider` to sync dark/light mode.
-- Reuse UI components (e.g., Button, Card, Input) consistently.
-- Animations via `react-native-reanimated` and `moti`.
-
----
-
-## 5. Mocking Logic (UI-Only Mode)
-
-Use temporary placeholders for all backend interactions.
+**Example: useMockAuth.ts**
 
 ```ts
-// hooks/useMockAuth.ts
 export const useMockAuth = () => ({
   signInWithGoogle: async () => Promise.resolve({ user: { name: 'Demo User' } }),
   signInWithEmail: async () => Promise.resolve({ user: { name: 'Demo Email User' } }),
   signOut: async () => Promise.resolve(),
   currentUser: { name: 'Demo User' },
 });
-6. AI Behavior Rules
-If claude.md is missing, treat firebase-gemini.md as primary context.
+```
 
-When conflicts arise:
+---
 
-Design → design-system.md is the truth.
+## 🔹 AI Behavior Rules
 
-Architecture → firebase-gemini.md wins.
+1. **Design Conflicts:** `/ai_context/design-system.md` is authoritative
+2. **Architecture Conflicts:** `firebase-gemini.md` wins
+3. **Backend Assumption:** Supabase is default for real integration
+4. **API Undefined:** Use mock data or fake hooks
+5. **New Files:** Include header comment with purpose + dependencies
+6. **Maintain Layered Approach:** UI → State → Mock API → AI hints
 
-Backend → always assume Supabase unless told otherwise.
+---
 
-Use mock data or fake hooks when API endpoints are undefined.
+## 🔹 Example Prompt
 
-Maintain 70% code / 30% explanation ratio.
+> “Add a new `/app/(auth)/onboarding` screen introducing XFitness features.
+> Use Expo Router and match design-system.md theme.
+> Include Google + Email mock auth buttons (useMockAuth).
+> Follow firebase-gemini.md architecture.”
 
-When creating new files, include a header comment with purpose and dependencies.
+---
 
-7. Example Prompt You Can Give
-“Add a new /app/(auth)/onboarding screen that introduces XFitness features.
-Use Expo Router and match theme from design-system.md.
-Include Google + Email mock auth buttons (useMockAuth).
-Follow firebase-gemini.md architecture.”
+## 🔹 Future Supabase Integration Notes
 
-8. Future Integration Notes (Supabase Phase)
-When backend integration starts:
+* Replace `useMockAuth` → `useSupabaseAuth`
+* Replace fake API calls → `lib/api.ts` + Supabase RPC / REST
+* Migrate local state → sync with real-time Supabase stores
+* Implement payment & access logs webhook handling
+* Push notifications → Firebase → real member tokens
 
-Replace useMockAuth with real useSupabaseAuth.
+---
 
-Replace mock state with @supabase/supabase-js client hooks.
+## 🔹 Coding Standards
 
-Migrate all fake API calls to lib/api/ directory.
+* TypeScript only, no `any`
+* Functional components + `React.memo` for lists
+* zod schemas for API responses
+* Expo-compatible packages only
+* Always include type + interface for props
 
+---
+
+## 🔹 Testing Convention
+
+* Unit tests → `/__tests__/`
+* Test filename = `ComponentName.test.tsx`
+* Coverage focus: Auth, memberships, workouts, access logs
+
+---
+
+## 🔹 Version Control & Deployment
+
+* GitHub with Conventional Commits (`feat:`, `fix:`, `chore:`)
+* Feature branches: `feature/workout-logging`
+* Expo EAS CI → OTA updates for dev & beta
+* Preflight: Lint + Typecheck + Tests
+
+---
+
+✅ **Summary**
+
+**Firebase Gemini** = UI-first brain for XFitness Expo Mobile App
+
+* Provides **mock data & AI-driven placeholders**
+* Guides **folder structure, naming, hooks, and component usage**
+* Ensures **UI-first development** before Supabase backend
+* Supports **future-proof integration** with real API endpoints, payments, and notifications
+
+\
