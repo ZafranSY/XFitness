@@ -1,8 +1,11 @@
-import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Login() {
   const { signIn } = useAuth();
+  const [email, setEmail] = useState('demo@xf.com'); // <--- ADDED
+  const [password, setPassword] = useState('password');
   return (
     <View style={styles.container}>
       <Text style={styles.title}>XFitness</Text>

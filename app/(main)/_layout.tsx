@@ -1,5 +1,5 @@
-import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 
@@ -42,16 +42,22 @@ export default function MainLayout() {
           ),
         }}
       />
+      {/* FIXED: Renamed the 'name' prop from "members" to "memberPages" 
+        to match the renamed directory app/(main)/memberPages/
+        This resolves the name conflict with the directory-based route.
+        The tabBarLabel remains 'Members' for the UI.
+      */}
       <Tabs.Screen
-        name="members"
+        name="memberPages" // <--- RENAMED THIS LINE
         options={{
-          tabBarLabel: 'Members',
+          tabBarLabel: 'Members', // Keep UI label as 'Members'
           title: 'Members',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="people-outline" size={size} color={color} />
           ),
         }}
       />
+      {/* Add other Tabs.Screen components here if needed */}
     </Tabs>
   );
 }
