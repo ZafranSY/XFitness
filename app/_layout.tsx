@@ -1,24 +1,51 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { AuthProvider, useAuth } from '../context/AuthContext';
+import { Slot, useRouter, useSegments } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import { useLoadedResources } from '../hooks/useLoadedResources';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+SplashScreen.preventAutoHideAsync();
+
+function RootLayoutNav() {
+  const { user } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+  const [isNavigationReady, setNavigationReady] = useState(false);
+  const isLoading = useLoadedResources();
+
+  useEffect(() => {
+    if (!isLoading) {
+      setNavigationReady(true);
+      SplashScreen.hideAsync();
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!isNavigationReady) {
+      return;
+    }
+    const inAuthGroup = segments[0] === '(auth)';
+
+    if (user && !inAuthGroup) {
+      router.replace('/(main)/dashboard');
+    } else if (!user && inAuthGroup) {
+      router.replace('/(auth)/login');
+    }
+  }, [user, segments, router, isNavigationReady]);
+
+  if (!isNavigationReady) {
+    return <View />;
+  }
+
+  return <Slot />;
+}
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
   );
 }
