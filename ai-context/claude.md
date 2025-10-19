@@ -4,7 +4,7 @@
 
 -   **Name:** XFitness
 -   **Type:** Gym & Fitness Management Ecosystem (Admin Web + Member Mobile)
--   **Tech Focus:** React Native + Expo SDK 52 (Mobile), Next.js + Supabase (Admin Web)
+-   **Tech Focus:** React Native + Expo SDK 54 (Mobile), Next.js + Supabase (Admin Web)
 -   **Goal:** Simplify gym operations, automate memberships, payments, attendance, and notifications with real-time sync.
 
 ## 🔹 1. Core Tech Stack (Mobile App)
